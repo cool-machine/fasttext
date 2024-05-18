@@ -1,5 +1,3 @@
-C:\Users\georg\OneDrive\Desktop\projects\azure\new_beginning\models\
-
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
@@ -9,6 +7,7 @@ __pycache/
 model/
 models/
 old/
+finetuned/
 
 # C extensions
 *.so
