@@ -1,12 +1,10 @@
 import warnings
 
-
 from fastapi import FastAPI, UploadFile, File, Form, Request
 from fastapi.templating import Jinja2Templates
 from fastapi.responses import JSONResponse, HTMLResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
-
 
 import logging
 from typing import List
@@ -15,16 +13,10 @@ import torch
 
 # from app.models.sentiment_model import SentimentModel  # Ensure this is correctly imported
 # from app.preprocessing.clean_text import clean_text  # Ensure this is correctly imported
+# from app.models.sentiment_model import sentiment_pipeline
 from app.api.endpoints import analyze_sentiment
-
-
-# global variables
-input_size = 128  # Assuming FastText embeddings are of size 128
-hidden_size = 64
-num_layers = 2
-num_classes = 2  # Number of output classes
-dropout = 0.5
-
+import fasttext
+device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 # Initialize logging
 logging.basicConfig(level=logging.INFO)
@@ -41,15 +33,6 @@ templates = Jinja2Templates(directory="app/templates")
 class TextRequest(BaseModel):
     text: str
 
-# # Load models and initialize SentimentModel
-# fasttext_model_path = "finetuned/embedding_fasttext/fasttext_model.bin"  # Update the path accordingly
-# lstm_model_path = "finetuned/predict_lstm/lstm_fasttext.pth"  # Update the path accordingly
-
-# try:
-#     sentiment_model = SentimentModel(fasttext_model_path, lstm_model_path, input_size, hidden_size, num_layers, num_classes, dropout)
-# except Exception as e:
-#     print(f"Error loading models: {e}")
-#     raise
 
 @app.get("/", response_class=HTMLResponse)
 async def read_root(request: Request):
@@ -108,7 +91,7 @@ async def analyze_text(text_request: TextRequest):
         text = text_request
         # Log the received text
         logger.info(f"Received text: {text}")
-
+        
         # Analyze the text (await the async function)
         sentiment = await analyze_sentiment(text)
 
