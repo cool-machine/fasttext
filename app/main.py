@@ -51,7 +51,6 @@ async def upload_file(file: UploadFile = File(...)):
         else:
             logger.error(f"Unsupported file type: {file.filename}")
             return JSONResponse(content={"error": "Unsupported file type"}, status_code=400)
-
         # Log the DataFrame to ensure it is read correctly
         logger.info(f"DataFrame head: {df.head()}")
 
